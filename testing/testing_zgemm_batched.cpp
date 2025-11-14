@@ -190,10 +190,10 @@ int main( int argc, char** argv)
                   hipblasZgemmBatched(
                                    opts.handle, cublas_trans_const(opts.transA), cublas_trans_const(opts.transB),
                                    int(M), int(N), int(K),
-                                   (const hipDoubleComplex*)&alpha,
-                                   (const hipDoubleComplex**) d_A_array, int(ldda),
-                                   (const hipDoubleComplex**) d_B_array, int(lddb),
-                                   (const hipDoubleComplex*)&beta,
+                                   reinterpret_cast<const hipDoubleComplex*>(&alpha),
+                                   reinterpret_cast<const hipDoubleComplex**> (d_A_array), int(ldda),
+                                   reinterpret_cast<const hipDoubleComplex**> (d_B_array), int(lddb),
+                                   reinterpret_cast<const hipDoubleComplex*>(&beta),
                                    (hipDoubleComplex**)d_C_array, int(lddc), int(batchCount) );
                 #endif
             }
@@ -211,10 +211,10 @@ int main( int argc, char** argv)
                 hipblasZgemmStridedBatched(
                                    opts.handle, cublas_trans_const(opts.transA), cublas_trans_const(opts.transB),
                                    int(M), int(N), int(K),
-                                   (const hipDoubleComplex*)&alpha,
-                                   (const hipDoubleComplex*) d_A, int(ldda), ldda * An,
-                                   (const hipDoubleComplex*) d_B, int(lddb), lddb * Bn,
-                                   (const hipDoubleComplex*)&beta,
+                                   reinterpret_cast<const hipDoubleComplex*>(&alpha),
+                                   reinterpret_cast<const hipDoubleComplex*> (d_A), int(ldda), ldda * An,
+                                   reinterpret_cast<const hipDoubleComplex*> (d_B), int(lddb), lddb * Bn,
+                                   reinterpret_cast<const hipDoubleComplex*>(&beta),
                                    (hipDoubleComplex*)d_C, int(lddc), lddc*N, int(batchCount) );
                 #endif
             }

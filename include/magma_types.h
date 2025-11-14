@@ -166,6 +166,14 @@ typedef double real_Double_t;
     #if HIP_VERSION >= 50200000
     #include <hipblas/hipblas.h>
     #include <hipsparse/hipsparse.h>
+    
+    // for dtk-24.04.1
+    #include <hipblaslt/hipblaslt.h>
+    #include <hipblas/hipblas.h>
+    // #ifndef HIP_DATA_TYPE_DEFINED_BY_DTK
+    // typedef hipblasDatatype_t hipDataType;
+    // #endif
+
     #else
     #include <hipblas.h>
     #include <hipsparse.h>

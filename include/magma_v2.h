@@ -37,4 +37,12 @@
 #include "magma_auxiliary.h"
 #include "magma_htc.h"
 
+#ifndef HIPBLAS_COMPUTE_32F
+#define HIPBLAS_COMPUTE_32F HIPBLAS_R_32F
+#endif
+
+#ifndef HIPBLAS_COMPUTE_64F
+#define HIPBLAS_COMPUTE_64F HIPBLAS_R_64F
+#endif
+
 #endif // MAGMA_V2_H
