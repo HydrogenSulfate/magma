@@ -1,11 +1,9 @@
+## MAGMA README FILE
+
 > [!IMPORTANT]
-> This repository has adapted MAGMA for HIP devices (Hygon C800, DTK24). Before usage, you can compile the libmagma.so library by executing `bash build.sh`.
+> This repository has adapted MAGMA for HIP devices (Hygon C800, DTK24).
+> Before usage, you can compile the libmagma.so library by executing `bash build.sh`.
 
-===================
-MAGMA README FILE
-===================
-
---------------------------------------------------------------------------------
 * Quick start (make)
 
     Create a make.inc file to indicate your C/C++ compiler, Fortran compiler,
