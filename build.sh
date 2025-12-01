@@ -58,10 +58,16 @@ cmake .. \
   -DHIP_ROOT_DIR="${HIP_PATH}" \
   -DCMAKE_CXX_COMPILER="${HIP_PATH}/bin/hipcc" \
   -DLAPACK_LIBRARIES="${LAPACK_DIR}/liblapack.so.3;${LAPACK_DIR}/libblas.so.3;${LAPACK_DIR}/libgfortran.so.3;${LAPACK_DIR}/libquadmath.so.0" \
-  -DROCM_MATHLIBS_API_USE_HIP_COMPLEX=ON
+  -DROCM_MATHLIBS_API_USE_HIP_COMPLEX=ON \
+  -DCMAKE_INSTALL_RPATH="\$ORIGIN" \
+  -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON
 
 make -j32
 make install
+
+pushd ../magma_install/lib
+tar -cvf magma_lnx_hip_v2.9.0.20250728.tar.gz ./*.so
+popd
 
 echo ""
 echo "✅ MAGMA build finished successfully (HIP/DTK + gfx90a)!"
