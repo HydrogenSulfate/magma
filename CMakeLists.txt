@@ -354,7 +354,7 @@ endif()
 
 
 # ----------------------------------------
-# save magma.lib, magma_sparse.lib, etc. in lib/
+# save magma.lib, etc. in lib/
 set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY lib )
 set( CMAKE_LIBRARY_OUTPUT_DIRECTORY lib )
 
@@ -432,7 +432,7 @@ if (WIN32)
         ${LAPACK_LIBRARIES}
         CUDA::cudart
         CUDA::cublas
-        CUDA::cusparse
+        # CUDA::cusparse
         magma_nvcc_flags
     )
 
@@ -457,7 +457,7 @@ else()
         ${LAPACK_LIBRARIES}
         CUDA::cudart
         CUDA::cublas
-        CUDA::cusparse
+        # CUDA::cusparse
         magma_nvcc_flags
         )
     else()
@@ -475,7 +475,7 @@ else()
         ${LAPACK_LIBRARIES}
         hip::device
         roc::hipblas
-        roc::hipsparse
+        # roc::hipsparse
         )
     endif()
 
@@ -532,37 +532,37 @@ target_link_libraries( tester
 # compile MAGMA sparse library
 
 # sparse doesn't have Fortran at the moment, so no need for above shenanigans
-if (MAGMA_ENABLE_CUDA)
-  include_directories( sparse/include )
-  include_directories( sparse/control )
-else()
-  include_directories( sparse_hip/include )
-  include_directories( sparse_hip/control )
-endif()
-include_directories( testing )
+# if (MAGMA_ENABLE_CUDA)
+#   include_directories( sparse/include )
+#   include_directories( sparse/control )
+# else()
+#   include_directories( sparse_hip/include )
+#   include_directories( sparse_hip/control )
+# endif()
+# include_directories( testing )
 
-if (MAGMA_ENABLE_CUDA)
-  add_library( magma_sparse ${libsparse_all} )
-  set_property(TARGET magma_sparse PROPERTY CUDA_STANDARD 14)
-  target_link_libraries( magma_sparse
-    magma
-    ${LAPACK_LIBRARIES}
-    CUDA::cudart
-    CUDA::cublas
-    CUDA::cusparse
-    magma_nvcc_flags
-    )
-else()
-  add_library( magma_sparse ${libsparse_all} )
-  target_link_libraries( magma_sparse
-    magma
-    ${LAPACK_LIBRARIES}
-    hip::device
-    roc::hipblas
-    roc::hipsparse
-    )
-endif()
-add_custom_target( sparse-lib DEPENDS magma_sparse )
+# if (MAGMA_ENABLE_CUDA)
+#   add_library( magma_sparse ${libsparse_all} )
+#   set_property(TARGET magma_sparse PROPERTY CUDA_STANDARD 14)
+#   target_link_libraries( magma_sparse
+#     magma
+#     ${LAPACK_LIBRARIES}
+#     CUDA::cudart
+#     CUDA::cublas
+#     CUDA::cusparse
+#     magma_nvcc_flags
+#     )
+# else()
+#   add_library( magma_sparse ${libsparse_all} )
+#   target_link_libraries( magma_sparse
+#     magma
+#     ${LAPACK_LIBRARIES}
+#     hip::device
+#     roc::hipblas
+#     roc::hipsparse
+#     )
+# endif()
+# add_custom_target( sparse-lib DEPENDS magma_sparse )
 
 
 # ----------------------------------------
@@ -570,59 +570,59 @@ add_custom_target( sparse-lib DEPENDS magma_sparse )
 
 # save testers to testing/
 # save tester lib files to testing_lib/ to avoid cluttering lib/
-set( CMAKE_RUNTIME_OUTPUT_DIRECTORY testing )
-set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY testing_lib )
-set( CMAKE_LIBRARY_OUTPUT_DIRECTORY testing_lib )
+# set( CMAKE_RUNTIME_OUTPUT_DIRECTORY testing )
+# set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY testing_lib )
+# set( CMAKE_LIBRARY_OUTPUT_DIRECTORY testing_lib )
 
 # skip Fortran testers, which require an extra file from CUDA
-foreach( filename ${testing_all} )
-    if (filename MATCHES "\\.(c|cu|cpp)$")
-        list( APPEND testing_all_cpp ${filename} )
-    endif()
-endforeach()
-foreach( TEST ${testing_all_cpp} )
-    string( REGEX REPLACE "\\.(cpp|f90|F90)" "" EXE ${TEST} )
-    string( REGEX REPLACE "testing/" "" EXE ${EXE} )
-    #message( "${TEST} --> ${EXE}" )
-    add_executable( ${EXE} ${TEST} )
-    target_link_libraries( ${EXE} tester lapacktest magma )
-    list( APPEND testing ${EXE} )
-endforeach()
-add_custom_target( testing DEPENDS ${testing} )
+# foreach( filename ${testing_all} )
+#     if (filename MATCHES "\\.(c|cu|cpp)$")
+#         list( APPEND testing_all_cpp ${filename} )
+#     endif()
+# endforeach()
+# foreach( TEST ${testing_all_cpp} )
+#     string( REGEX REPLACE "\\.(cpp|f90|F90)" "" EXE ${TEST} )
+#     string( REGEX REPLACE "testing/" "" EXE ${EXE} )
+#     #message( "${TEST} --> ${EXE}" )
+#     add_executable( ${EXE} ${TEST} )
+#     target_link_libraries( ${EXE} tester lapacktest magma )
+#     list( APPEND testing ${EXE} )
+# endforeach()
+# add_custom_target( testing DEPENDS ${testing} )
 
 
 # ----------------------------------------
 # compile each sparse tester
 
-if (MAGMA_ENABLE_CUDA)
-  set(SPARSE_TEST_DIR "sparse/testing")
-else()
-  set(SPARSE_TEST_DIR "sparse_hip/testing")
-endif()
+# if (MAGMA_ENABLE_CUDA)
+#   set(SPARSE_TEST_DIR "sparse/testing")
+# else()
+#   set(SPARSE_TEST_DIR "sparse_hip/testing")
+# endif()
 
 
-set( CMAKE_RUNTIME_OUTPUT_DIRECTORY "${SPARSE_TEST_DIR}" )
-foreach( TEST ${sparse_testing_all} )
-    string( REGEX REPLACE "\\.(cpp|f90|F90)"     "" EXE ${TEST} )
-    string( REGEX REPLACE "${SPARSE_TEST_DIR}/" "" EXE ${EXE} )
-    #message( "${TEST} --> ${EXE}" )
-    add_executable( ${EXE} ${TEST} )
-    target_link_libraries( ${EXE} magma_sparse magma )
-    list( APPEND sparse-testing ${EXE} )
-endforeach()
-add_custom_target( sparse-testing DEPENDS ${sparse-testing} )
+# set( CMAKE_RUNTIME_OUTPUT_DIRECTORY "${SPARSE_TEST_DIR}" )
+# foreach( TEST ${sparse_testing_all} )
+#     string( REGEX REPLACE "\\.(cpp|f90|F90)"     "" EXE ${TEST} )
+#     string( REGEX REPLACE "${SPARSE_TEST_DIR}/" "" EXE ${EXE} )
+#     #message( "${TEST} --> ${EXE}" )
+#     add_executable( ${EXE} ${TEST} )
+#     target_link_libraries( ${EXE} magma_sparse magma )
+#     list( APPEND sparse-testing ${EXE} )
+# endforeach()
+# add_custom_target( sparse-testing DEPENDS ${sparse-testing} )
 
 
 # ----------------------------------------
 # what to install
-install( TARGETS magma magma_sparse
+install( TARGETS magma
          RUNTIME DESTINATION bin
          LIBRARY DESTINATION lib
          ARCHIVE DESTINATION lib )
 if (MAGMA_ENABLE_CUDA)
-  file( GLOB headers include/*.h sparse/include/*.h "${CMAKE_BINARY_DIR}/include/*.h" )
+  file( GLOB headers include/*.h "${CMAKE_BINARY_DIR}/include/*.h" )
 else()
-  file( GLOB headers include/*.h sparse_hip/include/*.h "${CMAKE_BINARY_DIR}/include/*.h" )
+  file( GLOB headers include/*.h "${CMAKE_BINARY_DIR}/include/*.h" )
 endif()
 if (USE_FORTRAN)
     install( FILES ${headers} ${modules}
@@ -645,10 +645,10 @@ set( CFLAGS "${CMAKE_C_FLAGS}" )
 set( CXXFLAGS "${CMAKE_CXX_FLAGS}" )
 if (MAGMA_ENABLE_CUDA)
   string( REPLACE ";" " " LIBS
-          "${LAPACK_LIBS} -L${CUDAToolkit_LIBRARY_DIR} -lcudart -lcublas -lcusparse")
+          "${LAPACK_LIBS} -L${CUDAToolkit_LIBRARY_DIR} -lcudart -lcublas")
 else()
   string( REPLACE ";" " " LIBS
-          "${LAPACK_LIBS} ${HIP} ${rocBLAS} ${rocSPARSE}" )
+          "${LAPACK_LIBS} ${HIP} ${rocBLAS}" )
 #         "${LAPACK_LIBS} hip::device roc::hipblas roc::hipsparse" )
 endif()
 set( MAGMA_REQUIRED "" )
@@ -675,10 +675,10 @@ message( STATUS "    INCLUDE_DIRECTORIES:   ${MAGMA_INCLUDE}"   )
 if (MAGMA_ENABLE_CUDA)
   message( STATUS "    CUDA_CUDART_LIBRARY:   CUDA::cudart"   )
   message( STATUS "    CUDA_CUBLAS_LIBRARIES: CUDA::cublas" )
-  message( STATUS "    CUDA_cusparse_LIBRARY: CUDA::cusparse" )
+  # message( STATUS "    CUDA_cusparse_LIBRARY: CUDA::cusparse" )
 else()
   message( STATUS "    HIP_LIBRARY:   hip::device"   )
   message( STATUS "    HIP_BLAS_LIBRARIES: roc::hipblas" )
-  message( STATUS "    HIP_sparse_LIBRARY: roc::hipsparse" )
+  # message( STATUS "    HIP_sparse_LIBRARY: roc::hipsparse" )
 endif()
 message( STATUS "    Fortran modules:       ${modules}" )
